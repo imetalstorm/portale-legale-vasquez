@@ -5,7 +5,7 @@ import jsPDF
 from 'jspdf'
 
 import {
-  addPdfTemplate
+  createPDFTemplate
 } from '../utils/pdfTemplate'
 
 export default function CancellazioneCasellarioPage({
@@ -25,7 +25,7 @@ export default function CancellazioneCasellarioPage({
     useState('Eddy Vasquez')
 
   const declarationText =
-`Il soggetto dovrà formalmente ammettere le proprie responsabilità in relazione ai fatti contestati, dimostrando consapevolezza e volontà di reinserimento, secondo le modalità previste nella presente procedura.`
+`Il sottoscritto dichiara formalmente di assumersi le proprie responsabilità in relazione ai fatti contestati, dimostrando piena consapevolezza delle condotte poste in essere e manifestando concreta volontà di reinserimento nella società, conformemente alle modalità e disposizioni previste dalla normativa vigente.`
 
   async function generatePDF() {
 
@@ -47,16 +47,18 @@ export default function CancellazioneCasellarioPage({
     const doc =
       new jsPDF()
 
-    await addPdfTemplate(doc)
+    // TEMPLATE PROFESSIONALE
 
-    // TITOLO
+    await createPDFTemplate(doc)
 
-    doc.setFontSize(18)
+    // HEADER
+
+    doc.setFontSize(20)
 
     doc.text(
       'ISTANZA DI CANCELLAZIONE DEL CASELLARIO GIUDIZIARIO',
       20,
-      40,
+      45,
       {
         maxWidth: 170
       }
@@ -69,31 +71,31 @@ export default function CancellazioneCasellarioPage({
     doc.text(
       `Protocollo: ${protocol}`,
       20,
-      65
+      70
     )
 
     doc.text(
       `Nome e cognome: ${fullName}`,
       20,
-      85
+      90
     )
 
     doc.text(
       `Data di nascita: ${birthDate}`,
       20,
-      100
+      105
     )
 
     doc.text(
       `Impiego lavorativo attuale: ${currentJob}`,
       20,
-      115
+      120
     )
 
     doc.text(
       declarationText,
       20,
-      145,
+      150,
       {
         maxWidth: 170
       }
@@ -104,7 +106,7 @@ export default function CancellazioneCasellarioPage({
     doc.text(
       `Avvocato: ${lawyer}`,
       20,
-      230
+      240
     )
 
     // DOWNLOAD
@@ -215,7 +217,7 @@ export default function CancellazioneCasellarioPage({
         <textarea
           value={declarationText}
           readOnly
-          rows={6}
+          rows={7}
           style={textareaStyle}
         />
 
