@@ -2,56 +2,28 @@ export async function addPdfTemplate(
   doc
 ) {
 
+  // SFONDO COMPLETO
+
   try {
 
-    const logo =
-      '/logo.png'
-
     doc.addImage(
-      logo,
+      '/pdf-background.png',
       'PNG',
-      75,
-      10,
-      60,
-      25
+      0,
+      0,
+      210,
+      297
     )
 
   } catch (err) {
 
     console.log(
-      'Logo non caricato'
+      'Background non caricato'
     )
   }
-
-  // FILIGRANA
-
-  doc.setTextColor(
-    230,
-    230,
-    230
-  )
-
-  doc.setFontSize(60)
-
-  doc.text(
-    'VASQUEZ',
-    35,
-    160,
-    {
-      angle: 45
-    }
-  )
-
-  // RESET COLORI
-
-  doc.setTextColor(
-    0,
-    0,
-    0
-  )
 }
 
-// COMPATIBILITÀ CON FILE VECCHI
+// COMPATIBILITÀ FILE VECCHI
 
 export const createPDFTemplate =
   addPdfTemplate
