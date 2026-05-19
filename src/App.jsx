@@ -37,6 +37,9 @@ from './pages/ClientiPage'
 import ArchivioPratiche
 from './pages/ArchivioPratiche'
 
+import CancellazioneCasellarioPage
+from './pages/CancellazioneCasellarioPage'
+
 export default function App() {
 
   const [user, setUser] =
@@ -48,7 +51,7 @@ export default function App() {
   const [page, setPage] =
     useState('home')
 
-  // CONTROLLO SESSIONE
+  // SESSIONE
 
   useEffect(() => {
 
@@ -150,7 +153,7 @@ export default function App() {
     )
   }
 
-  // ACCESSO AGLI ATTI
+  // ACCESSO ATTI
 
   if (
     page ===
@@ -276,6 +279,24 @@ export default function App() {
     )
   }
 
+  // CANCELLAZIONE CASELLARIO
+
+  if (
+    page ===
+    'cancellazione-casellario'
+  ) {
+
+    return (
+
+      <CancellazioneCasellarioPage
+        goHome={() =>
+          setPage('home')
+        }
+      />
+
+    )
+  }
+
   // HOMEPAGE
 
   return (
@@ -333,6 +354,12 @@ export default function App() {
       openArchivioPratiche={() =>
         setPage(
           'archivio-pratiche'
+        )
+      }
+
+      openCancellazioneCasellario={() =>
+        setPage(
+          'cancellazione-casellario'
         )
       }
 

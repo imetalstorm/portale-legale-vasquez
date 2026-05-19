@@ -18,7 +18,9 @@ export default function HomePage({
 
   openClienti,
 
-  openArchivioPratiche
+  openArchivioPratiche,
+
+  openCancellazioneCasellario
 
 }) {
 
@@ -202,6 +204,15 @@ export default function HomePage({
             style={buttonStyle}
           >
             ARCHIVIO PRATICHE
+          </button>
+
+          <button
+            onClick={
+              openCancellazioneCasellario
+            }
+            style={buttonStyle}
+          >
+            CANCELLAZIONE CASELLARIO
           </button>
 
         </div>
