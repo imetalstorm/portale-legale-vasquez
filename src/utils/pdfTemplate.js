@@ -2,12 +2,10 @@ export async function addPdfTemplate(
   doc
 ) {
 
-  // LOGO
-
-  const logo =
-    '/logo.png'
-
   try {
+
+    const logo =
+      '/logo.png'
 
     doc.addImage(
       logo,
@@ -44,7 +42,7 @@ export async function addPdfTemplate(
     }
   )
 
-  // RESET
+  // RESET COLORI
 
   doc.setTextColor(
     0,
@@ -52,3 +50,8 @@ export async function addPdfTemplate(
     0
   )
 }
+
+// COMPATIBILITÀ CON FILE VECCHI
+
+export const createPDFTemplate =
+  addPdfTemplate
