@@ -1,13 +1,14 @@
+import background
+from '../assets/pdf-background.png'
+
 export async function addPdfTemplate(
   doc
 ) {
 
-  // SFONDO COMPLETO
-
   try {
 
     doc.addImage(
-      '/pdf-background.png',
+      background,
       'PNG',
       0,
       0,
@@ -18,7 +19,7 @@ export async function addPdfTemplate(
   } catch (err) {
 
     console.log(
-      'Background non caricato'
+      'Errore background PDF'
     )
   }
 }
