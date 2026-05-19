@@ -47,66 +47,95 @@ export default function CancellazioneCasellarioPage({
     const doc =
       new jsPDF()
 
-    // TEMPLATE PROFESSIONALE
+    // TEMPLATE PDF
 
     await createPDFTemplate(doc)
 
-    // HEADER
+    // TITOLO
 
-    doc.setFontSize(20)
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(21)
 
     doc.text(
-      'ISTANZA DI CANCELLAZIONE DEL CASELLARIO GIUDIZIARIO',
-      20,
-      45,
+      'ISTANZA DI CANCELLAZIONE',
+      105,
+      78,
       {
-        maxWidth: 170
+        align: 'center'
       }
     )
 
-    // CONTENUTO
+    doc.text(
+      'DEL CASELLARIO GIUDIZIARIO',
+      105,
+      92,
+      {
+        align: 'center'
+      }
+    )
 
-    doc.setFontSize(12)
+    // DATI
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(14)
 
     doc.text(
       `Protocollo: ${protocol}`,
-      20,
-      70
-    )
-
-    doc.text(
-      `Nome e cognome: ${fullName}`,
-      20,
-      90
-    )
-
-    doc.text(
-      `Data di nascita: ${birthDate}`,
-      20,
-      105
-    )
-
-    doc.text(
-      `Impiego lavorativo attuale: ${currentJob}`,
-      20,
+      22,
       120
     )
 
     doc.text(
+      `Nome e cognome: ${fullName}`,
+      22,
+      145
+    )
+
+    doc.text(
+      `Data di nascita: ${birthDate}`,
+      22,
+      165
+    )
+
+    doc.text(
+      `Impiego lavorativo attuale: ${currentJob}`,
+      22,
+      185
+    )
+
+    // TESTO
+
+    doc.setFontSize(13)
+
+    doc.text(
       declarationText,
-      20,
-      150,
+      22,
+      225,
       {
-        maxWidth: 170
+        maxWidth: 165,
+        lineHeightFactor: 1.8
       }
     )
 
     // FIRMA
 
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
     doc.text(
       `Avvocato: ${lawyer}`,
-      20,
-      240
+      22,
+      265
     )
 
     // DOWNLOAD
@@ -167,7 +196,8 @@ export default function CancellazioneCasellarioPage({
           src="/logo.png"
           style={{
             width: '180px',
-            margin: '0 auto'
+            margin: '0 auto',
+            objectFit: 'contain'
           }}
         />
 
