@@ -47,7 +47,7 @@ export default function CancellazioneCasellarioPage({
     const doc =
       new jsPDF()
 
-    // TEMPLATE PDF
+    // TEMPLATE
 
     await createPDFTemplate(doc)
 
@@ -58,21 +58,21 @@ export default function CancellazioneCasellarioPage({
       'bold'
     )
 
-    doc.setFontSize(21)
+    doc.setFontSize(20)
 
     doc.text(
-      'ISTANZA DI CANCELLAZIONE',
+      'ISTANZA DI CANCELLAZIONE DEL CASELLARIO',
       105,
-      78,
+      120,
       {
         align: 'center'
       }
     )
 
     doc.text(
-      'DEL CASELLARIO GIUDIZIARIO',
+      'GIUDIZIARIO',
       105,
-      92,
+      134,
       {
         align: 'center'
       }
@@ -85,40 +85,40 @@ export default function CancellazioneCasellarioPage({
       'normal'
     )
 
-    doc.setFontSize(14)
+    doc.setFontSize(13)
 
     doc.text(
       `Protocollo: ${protocol}`,
-      22,
-      120
-    )
-
-    doc.text(
-      `Nome e cognome: ${fullName}`,
-      22,
-      145
-    )
-
-    doc.text(
-      `Data di nascita: ${birthDate}`,
       22,
       165
     )
 
     doc.text(
-      `Impiego lavorativo attuale: ${currentJob}`,
+      `Nome e cognome: ${fullName}`,
       22,
-      185
+      190
     )
 
-    // TESTO
+    doc.text(
+      `Data di nascita: ${birthDate}`,
+      22,
+      210
+    )
 
-    doc.setFontSize(13)
+    doc.text(
+      `Impiego lavorativo attuale: ${currentJob}`,
+      22,
+      230
+    )
+
+    // TESTO PRINCIPALE
+
+    doc.setFontSize(12)
 
     doc.text(
       declarationText,
       22,
-      225,
+      265,
       {
         maxWidth: 165,
         lineHeightFactor: 1.8
@@ -135,7 +135,7 @@ export default function CancellazioneCasellarioPage({
     doc.text(
       `Avvocato: ${lawyer}`,
       22,
-      265
+      330
     )
 
     // DOWNLOAD
