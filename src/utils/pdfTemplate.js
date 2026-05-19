@@ -1,116 +1,54 @@
-import jsPDF
-from 'jspdf'
-
-import logo
-from '../assets/logo.png'
-
-import watermark
-from '../assets/watermark.png'
-
-export function createPDFTemplate(
-  title
+export async function addPdfTemplate(
+  doc
 ) {
 
-  const doc = new jsPDF()
-
-  // SFONDO
-
-  doc.setFillColor(255,255,255)
-
-  doc.rect(
-    0,
-    0,
-    210,
-    297,
-    'F'
-  )
-
-  // FILIGRANA
-
-  try {
-
-    doc.addImage(
-      watermark,
-      'PNG',
-      35,
-      70,
-      140,
-      140
-    )
-
-  } catch(error) {
-
-    console.log(error)
-  }
-
   // LOGO
+
+  const logo =
+    '/logo.png'
 
   try {
 
     doc.addImage(
       logo,
       'PNG',
-      150,
+      75,
       10,
-      40,
-      40
+      60,
+      25
     )
 
-  } catch(error) {
+  } catch (err) {
 
-    console.log(error)
+    console.log(
+      'Logo non caricato'
+    )
   }
 
-  // HEADER
+  // FILIGRANA
 
-  doc.setTextColor(0,0,0)
+  doc.setTextColor(
+    230,
+    230,
+    230
+  )
 
-  doc.setFontSize(24)
+  doc.setFontSize(60)
 
   doc.text(
-    title,
-    20,
-    25
+    'VASQUEZ',
+    35,
+    160,
+    {
+      angle: 45
+    }
   )
 
-  doc.setFontSize(11)
+  // RESET
 
-  doc.text(
-    'Studio Legale Vasquez',
-    20,
-    40
+  doc.setTextColor(
+    0,
+    0,
+    0
   )
-
-  doc.text(
-    'Los Santos • Civico 389',
-    20,
-    47
-  )
-
-  doc.text(
-    'studiolegalevasquez@gammarp.com',
-    20,
-    54
-  )
-
-  // LINEA
-
-  doc.line(
-    20,
-    65,
-    190,
-    65
-  )
-
-  // FOOTER
-
-  doc.setFontSize(9)
-
-  doc.text(
-    'Documento generato automaticamente dal Portale Legale Vasquez.',
-    20,
-    287
-  )
-
-  return doc
 }
