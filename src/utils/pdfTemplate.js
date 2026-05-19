@@ -1,7 +1,7 @@
 import background
 from '../assets/pdf-background.png'
 
-export async function addPdfTemplate(
+export async function createPDFTemplate(
   doc
 ) {
 
@@ -19,12 +19,12 @@ export async function addPdfTemplate(
   } catch (err) {
 
     console.log(
-      'Errore background PDF'
+      'Errore caricamento template PDF'
     )
   }
 }
 
-// COMPATIBILITÀ FILE VECCHI
+// COMPATIBILITÀ
 
-export const createPDFTemplate =
-  addPdfTemplate
+export const addPdfTemplate =
+  createPDFTemplate

@@ -4,26 +4,18 @@ from 'react'
 import jsPDF
 from 'jspdf'
 
-import { supabase }
-from '../services/supabase'
-
-import logo
-from '../assets/logo.png'
-
-import watermark
-from '../assets/watermark.png'
+import {
+  createPDFTemplate
+} from '../utils/pdfTemplate'
 
 export default function DenuncePage({
   goHome
 }) {
 
-  const [complainant, setComplainant] =
+  const [fullName, setFullName] =
     useState('')
 
-  const [accused, setAccused] =
-    useState('')
-
-  const [location, setLocation] =
+  const [birthDate, setBirthDate] =
     useState('')
 
   const [facts, setFacts] =
@@ -34,278 +26,119 @@ export default function DenuncePage({
 
   async function generatePDF() {
 
-    try {
-
-      const protocol =
-        Math.floor(
-          Math.random() * 999999
-        )
-
-      const doc = new jsPDF()
-
-      // PAGINA
-
-      doc.setFillColor(255,255,255)
-
-      doc.rect(
-        0,
-        0,
-        210,
-        297,
-        'F'
-      )
-
-      // FILIGRANA
-
-      try {
-
-        doc.addImage(
-          watermark,
-          'PNG',
-          35,
-          70,
-          140,
-          140
-        )
-
-      } catch(error) {}
-
-      // LOGO
-
-      try {
-
-        doc.addImage(
-          logo,
-          'PNG',
-          150,
-          10,
-          40,
-          40
-        )
-
-      } catch(error) {}
-
-      // HEADER
-
-      doc.setTextColor(0,0,0)
-
-      doc.setFontSize(24)
-
-      doc.text(
-        'DENUNCIA UFFICIALE',
-        20,
-        25
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        'Studio Legale Vasquez',
-        20,
-        40
-      )
-
-      doc.text(
-        'Los Santos • Civico 389',
-        20,
-        47
-      )
-
-      doc.text(
-        'studiolegalevasquez@gammarp.com',
-        20,
-        54
-      )
-
-      // LINEA
-
-      doc.line(
-        20,
-        65,
-        190,
-        65
-      )
-
-      // PROTOCOLLO
-
-      doc.text(
-        `Protocollo: ${protocol}`,
-        20,
-        78
-      )
-
-      // TESTO
-
-      doc.setFontSize(12)
-
-      const denunciaText =
-        `Il sottoscritto ${complainant}, assistito legalmente dall'Avvocato ${lawyer}, presenta formale denuncia nei confronti di ${accused} per fatti verificatisi presso ${location}.`
-
-      doc.text(
-        denunciaText,
-        20,
-        100,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // DINAMICA
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Dinamica dei fatti',
-        20,
-        145
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        facts,
-        20,
-        160,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // FIRME
-
-      doc.setFontSize(12)
-
-      doc.text(
-        'Firma Assistito',
-        20,
-        250
-      )
-
-      doc.line(
-        20,
-        260,
-        80,
-        260
-      )
-
-      doc.text(
-        complainant,
-        20,
-        270
-      )
-
-      doc.text(
-        'Firma Avvocato',
-        120,
-        250
-      )
-
-      doc.line(
-        120,
-        260,
-        180,
-        260
-      )
-
-      doc.text(
-        lawyer,
-        120,
-        270
-      )
-
-      // CREA PDF
-
-      const pdfBlob =
-        doc.output('blob')
-
-      // DOWNLOAD
-
-      doc.save(
-        `denuncia_${complainant}.pdf`
-      )
-
-      // FILE NAME
-
-      const fileName =
-        `denuncia_${Date.now()}.pdf`
-
-      // UPLOAD
-
-      const {
-        error: uploadError
-      } =
-        await supabase
-          .storage
-          .from('denunce')
-          .upload(
-            fileName,
-            pdfBlob,
-            {
-              upsert: true,
-              contentType:
-                'application/pdf'
-            }
-          )
-
-      if (uploadError) {
-
-        alert(
-          'Errore upload storage'
-        )
-
-        return
-      }
-
-      // URL
-
-      const {
-        data: publicData
-      } =
-        supabase
-          .storage
-          .from('denunce')
-          .getPublicUrl(fileName)
-
-      const pdfUrl =
-        publicData.publicUrl
-
-      // DATABASE
-
-      await supabase
-        .from('denunce')
-        .insert({
-
-          complainant,
-
-          accused,
-
-          location,
-
-          facts,
-
-          lawyer,
-
-          protocol:
-            protocol.toString(),
-
-          pdf_url:
-            pdfUrl
-        })
+    if (
+      !fullName ||
+      !facts
+    ) {
 
       alert(
-        'Denuncia salvata correttamente.'
+        'Compila i campi obbligatori'
       )
 
-    } catch(error) {
-
-      console.log(error)
-
-      alert(
-        'Errore generale.'
-      )
+      return
     }
+
+    const protocol =
+      `DEN-${Date.now()}`
+
+    const doc =
+      new jsPDF()
+
+    // TEMPLATE GLOBALE
+
+    await createPDFTemplate(doc)
+
+    // TITOLO
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(20)
+
+    doc.text(
+      'DENUNCIA FORMALE',
+      105,
+      95,
+      {
+        align: 'center'
+      }
+    )
+
+    // DATI
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(12)
+
+    doc.text(
+      `Protocollo: ${protocol}`,
+      22,
+      130
+    )
+
+    doc.text(
+      `Nome e cognome: ${fullName}`,
+      22,
+      150
+    )
+
+    doc.text(
+      `Data di nascita: ${birthDate}`,
+      22,
+      170
+    )
+
+    // FATTI
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      'ESPOSIZIONE DEI FATTI',
+      22,
+      205
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.text(
+      facts,
+      22,
+      225,
+      {
+        maxWidth: 165,
+        lineHeightFactor: 1.7
+      }
+    )
+
+    // FIRMA
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      `Avvocato: ${lawyer}`,
+      22,
+      280
+    )
+
+    // DOWNLOAD
+
+    doc.save(
+      `denuncia_${Date.now()}.pdf`
+    )
   }
 
   return (
@@ -319,6 +152,8 @@ export default function DenuncePage({
       }}
     >
 
+      {/* HOME */}
+
       <button
         onClick={goHome}
         style={{
@@ -329,7 +164,7 @@ export default function DenuncePage({
           color: 'black',
           border: 'none',
           padding: '15px 30px',
-          borderRadius: '20px',
+          borderRadius: '18px',
           fontWeight: 'bold',
           cursor: 'pointer'
         }}
@@ -337,29 +172,46 @@ export default function DenuncePage({
         HOME
       </button>
 
-      <h1
-        style={{
-          color: '#d4af37',
-          fontSize: '55px',
-          marginBottom: '40px'
-        }}
-      >
-        DENUNCE
-      </h1>
+      {/* CONTAINER */}
 
       <div
         style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          background: '#101010',
+          border:
+            '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '30px',
+          padding: '40px',
           display: 'grid',
-          gap: '20px',
-          maxWidth: '1000px'
+          gap: '20px'
         }}
       >
 
+        <img
+          src="/logo.png"
+          style={{
+            width: '180px',
+            margin: '0 auto',
+            objectFit: 'contain'
+          }}
+        />
+
+        <h1
+          style={{
+            color: '#d4af37',
+            textAlign: 'center',
+            fontSize: '38px'
+          }}
+        >
+          DENUNCIA
+        </h1>
+
         <input
-          placeholder="Denunciante"
-          value={complainant}
+          placeholder="Nome e cognome"
+          value={fullName}
           onChange={(e) =>
-            setComplainant(
+            setFullName(
               e.target.value
             )
           }
@@ -367,21 +219,10 @@ export default function DenuncePage({
         />
 
         <input
-          placeholder="Accusato"
-          value={accused}
+          placeholder="Data di nascita"
+          value={birthDate}
           onChange={(e) =>
-            setAccused(
-              e.target.value
-            )
-          }
-          style={inputStyle}
-        />
-
-        <input
-          placeholder="Luogo dei fatti"
-          value={location}
-          onChange={(e) =>
-            setLocation(
+            setBirthDate(
               e.target.value
             )
           }
@@ -389,14 +230,14 @@ export default function DenuncePage({
         />
 
         <textarea
-          placeholder="Descrizione dei fatti"
+          placeholder="Esposizione dei fatti"
           value={facts}
           onChange={(e) =>
             setFacts(
               e.target.value
             )
           }
-          rows={10}
+          rows={8}
           style={textareaStyle}
         />
 
@@ -413,17 +254,9 @@ export default function DenuncePage({
 
         <button
           onClick={generatePDF}
-          style={{
-            background: '#d4af37',
-            color: 'black',
-            border: 'none',
-            padding: '20px',
-            borderRadius: '20px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
+          style={buttonStyle}
         >
-          GENERA DENUNCIA PDF
+          GENERA PDF
         </button>
 
       </div>
@@ -459,7 +292,26 @@ const textareaStyle = {
 
   color: 'white',
 
-  fontSize: '16px',
+  fontSize: '15px',
 
   resize: 'none'
+}
+
+const buttonStyle = {
+
+  background: '#d4af37',
+
+  color: 'black',
+
+  border: 'none',
+
+  padding: '20px',
+
+  borderRadius: '20px',
+
+  fontWeight: 'bold',
+
+  fontSize: '18px',
+
+  cursor: 'pointer'
 }
