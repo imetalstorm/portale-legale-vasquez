@@ -1,44 +1,26 @@
-import { useEffect, useState }
-from 'react'
+import { useEffect, useState } from 'react'
 
-import { supabase }
-from './services/supabase'
+import { supabase } from './services/supabase'
 
-import LoginPage
-from './pages/LoginPage'
+import LoginPage from './pages/LoginPage'
+import HomePage from './pages/HomePage'
 
-import HomePage
-from './pages/HomePage'
+import DenuncePage from './pages/DenuncePage'
+import ArchivioDenunce from './pages/ArchivioDenunce'
 
-import DenuncePage
-from './pages/DenuncePage'
+import AccessoAttiPage from './pages/AccessoAttiPage'
 
-import ArchivioDenunce
-from './pages/ArchivioDenunce'
+import QuerelePage from './pages/QuerelePage'
+import ArchivioQuerele from './pages/ArchivioQuerele'
 
-import AccessoAttiPage
-from './pages/AccessoAttiPage'
+import ContrattiLegaliPage from './pages/ContrattiLegaliPage'
+import ArchivioContratti from './pages/ArchivioContratti'
 
-import QuerelePage
-from './pages/QuerelePage'
+import ClientiPage from './pages/ClientiPage'
 
-import ArchivioQuerele
-from './pages/ArchivioQuerele'
+import ArchivioPratiche from './pages/ArchivioPratiche'
 
-import ContrattiLegaliPage
-from './pages/ContrattiLegaliPage'
-
-import ArchivioContratti
-from './pages/ArchivioContratti'
-
-import ClientiPage
-from './pages/ClientiPage'
-
-import ArchivioPratiche
-from './pages/ArchivioPratiche'
-
-import CancellazioneCasellarioPage
-from './pages/CancellazioneCasellarioPage'
+import CancellazioneCasellarioPage from './pages/CancellazioneCasellarioPage'
 
 export default function App() {
 
@@ -50,8 +32,6 @@ export default function App() {
 
   const [page, setPage] =
     useState('home')
-
-  // SESSIONE
 
   useEffect(() => {
 
@@ -72,8 +52,6 @@ export default function App() {
 
     setLoading(false)
   }
-
-  // LOGOUT
 
   async function logout() {
 
@@ -120,166 +98,106 @@ export default function App() {
     )
   }
 
-  // DENUNCE
+  // PAGINE
 
   if (page === 'denunce') {
 
     return (
-
       <DenuncePage
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // ARCHIVIO DENUNCE
-
-  if (
-    page ===
-    'archivio-denunce'
-  ) {
+  if (page === 'archivio-denunce') {
 
     return (
-
       <ArchivioDenunce
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // ACCESSO ATTI
-
-  if (
-    page ===
-    'accesso-atti'
-  ) {
+  if (page === 'accesso-atti') {
 
     return (
-
       <AccessoAttiPage
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // QUERELE
-
-  if (
-    page ===
-    'querele'
-  ) {
+  if (page === 'querele') {
 
     return (
-
       <QuerelePage
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // ARCHIVIO QUERELE
-
-  if (
-    page ===
-    'archivio-querele'
-  ) {
+  if (page === 'archivio-querele') {
 
     return (
-
       <ArchivioQuerele
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // CONTRATTI
-
-  if (
-    page ===
-    'contratti-legali'
-  ) {
+  if (page === 'contratti-legali') {
 
     return (
-
       <ContrattiLegaliPage
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // ARCHIVIO CONTRATTI
-
-  if (
-    page ===
-    'archivio-contratti'
-  ) {
+  if (page === 'archivio-contratti') {
 
     return (
-
       <ArchivioContratti
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // CLIENTI
-
-  if (
-    page ===
-    'clienti'
-  ) {
+  if (page === 'clienti') {
 
     return (
-
       <ClientiPage
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
 
-  // ARCHIVIO PRATICHE
-
-  if (
-    page ===
-    'archivio-pratiche'
-  ) {
+  if (page === 'archivio-pratiche') {
 
     return (
-
       <ArchivioPratiche
         goHome={() =>
           setPage('home')
         }
       />
-
     )
   }
-
-  // CANCELLAZIONE CASELLARIO
 
   if (
     page ===
