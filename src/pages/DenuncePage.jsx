@@ -55,12 +55,12 @@ export default function DenuncePage({
       'bold'
     )
 
-    doc.setFontSize(20)
+    doc.setFontSize(19)
 
     doc.text(
       'DENUNCIA FORMALE',
       105,
-      95,
+      82,
       {
         align: 'center'
       }
@@ -78,19 +78,19 @@ export default function DenuncePage({
     doc.text(
       `Protocollo: ${protocol}`,
       22,
-      130
+      102
     )
 
     doc.text(
       `Nome e cognome: ${fullName}`,
       22,
-      150
+      116
     )
 
     doc.text(
       `Data di nascita: ${birthDate}`,
       22,
-      170
+      130
     )
 
     // FATTI
@@ -103,7 +103,7 @@ export default function DenuncePage({
     doc.text(
       'ESPOSIZIONE DEI FATTI',
       22,
-      205
+      152
     )
 
     doc.setFont(
@@ -111,13 +111,15 @@ export default function DenuncePage({
       'normal'
     )
 
+    doc.setFontSize(11)
+
     doc.text(
       facts,
       22,
-      225,
+      168,
       {
         maxWidth: 165,
-        lineHeightFactor: 1.7
+        lineHeightFactor: 1.6
       }
     )
 
@@ -128,10 +130,12 @@ export default function DenuncePage({
       'bold'
     )
 
+    doc.setFontSize(11)
+
     doc.text(
       `Avvocato: ${lawyer}`,
       22,
-      280
+      270
     )
 
     // DOWNLOAD
@@ -152,8 +156,6 @@ export default function DenuncePage({
       }}
     >
 
-      {/* HOME */}
-
       <button
         onClick={goHome}
         style={{
@@ -171,8 +173,6 @@ export default function DenuncePage({
       >
         HOME
       </button>
-
-      {/* CONTAINER */}
 
       <div
         style={{
