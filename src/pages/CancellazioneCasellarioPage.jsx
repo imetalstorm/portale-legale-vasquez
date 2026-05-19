@@ -58,12 +58,12 @@ export default function CancellazioneCasellarioPage({
       'bold'
     )
 
-    doc.setFontSize(20)
+    doc.setFontSize(17)
 
     doc.text(
       'ISTANZA DI CANCELLAZIONE DEL CASELLARIO',
       105,
-      120,
+      95,
       {
         align: 'center'
       }
@@ -72,7 +72,7 @@ export default function CancellazioneCasellarioPage({
     doc.text(
       'GIUDIZIARIO',
       105,
-      134,
+      108,
       {
         align: 'center'
       }
@@ -85,43 +85,43 @@ export default function CancellazioneCasellarioPage({
       'normal'
     )
 
-    doc.setFontSize(13)
+    doc.setFontSize(11)
 
     doc.text(
       `Protocollo: ${protocol}`,
       22,
-      165
+      140
     )
 
     doc.text(
       `Nome e cognome: ${fullName}`,
       22,
-      190
+      165
     )
 
     doc.text(
       `Data di nascita: ${birthDate}`,
       22,
-      210
+      185
     )
 
     doc.text(
       `Impiego lavorativo attuale: ${currentJob}`,
       22,
-      230
+      205
     )
 
-    // TESTO PRINCIPALE
+    // TESTO
 
-    doc.setFontSize(12)
+    doc.setFontSize(10.5)
 
     doc.text(
       declarationText,
       22,
-      265,
+      245,
       {
         maxWidth: 165,
-        lineHeightFactor: 1.8
+        lineHeightFactor: 1.7
       }
     )
 
@@ -132,10 +132,12 @@ export default function CancellazioneCasellarioPage({
       'bold'
     )
 
+    doc.setFontSize(11)
+
     doc.text(
       `Avvocato: ${lawyer}`,
       22,
-      330
+      285
     )
 
     // DOWNLOAD
@@ -156,8 +158,6 @@ export default function CancellazioneCasellarioPage({
       }}
     >
 
-      {/* HOME */}
-
       <button
         onClick={goHome}
         style={{
@@ -175,8 +175,6 @@ export default function CancellazioneCasellarioPage({
       >
         HOME
       </button>
-
-      {/* CONTAINER */}
 
       <div
         style={{
