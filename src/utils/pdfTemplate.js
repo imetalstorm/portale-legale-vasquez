@@ -1,14 +1,14 @@
-import background
-from '../assets/pdf-background.png'
-
 export async function createPDFTemplate(
   doc
 ) {
 
   try {
 
+    const img =
+      '/pdf-background.png'
+
     doc.addImage(
-      background,
+      img,
       'PNG',
       0,
       0,
@@ -18,7 +18,9 @@ export async function createPDFTemplate(
 
   } catch (err) {
 
-    console.log(
+    console.log(err)
+
+    throw new Error(
       'Errore caricamento template PDF'
     )
   }
