@@ -1,5 +1,8 @@
-const backgroundBase64 =
-'data:image/png;base64,INSERISCI_BASE64'
+import jsPDF
+from 'jspdf'
+
+import background
+from '../assets/pdf-background.png'
 
 export async function createPDFTemplate(
   doc
@@ -7,8 +10,37 @@ export async function createPDFTemplate(
 
   try {
 
+    const img =
+      new Image()
+
+    img.src =
+      background
+
+    await new Promise(
+      (resolve, reject) => {
+
+        img.onload =
+          resolve
+
+        img.onerror =
+          reject
+      }
+    )
+
+    // IMPORTANTISSIMO
+
+    if (
+      typeof doc.addImage !==
+      'function'
+    ) {
+
+      throw new Error(
+        'doc non valido'
+      )
+    }
+
     doc.addImage(
-      backgroundBase64,
+      img,
       'PNG',
       0,
       0,
@@ -18,7 +50,10 @@ export async function createPDFTemplate(
 
   } catch (err) {
 
-    console.log(err)
+    console.log(
+      'ERRORE TEMPLATE:',
+      err
+    )
 
     throw new Error(
       'Errore template PDF'
