@@ -1,26 +1,38 @@
+import background
+from '../assets/pdf-background.png'
+
 export async function createPDFTemplate(
   doc
 ) {
 
   try {
 
-    const img =
-      new Image()
+    const response =
+      await fetch(background)
 
-    img.src =
-      '/pdf-background.png'
+    const blob =
+      await response.blob()
 
-    await new Promise(
-      (resolve, reject) => {
+    const reader =
+      new FileReader()
 
-        img.onload = resolve
+    const base64 =
+      await new Promise(
+        (resolve) => {
 
-        img.onerror = reject
-      }
-    )
+          reader.onloadend =
+            () => resolve(
+              reader.result
+            )
+
+          reader.readAsDataURL(
+            blob
+          )
+        }
+      )
 
     doc.addImage(
-      img,
+      base64,
       'PNG',
       0,
       0,
