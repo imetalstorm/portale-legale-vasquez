@@ -1,13 +1,12 @@
 import { useState }
 from 'react'
 
-import { supabase }
-from '../services/supabase'
+import jsPDF
+from 'jspdf'
 
 import {
   createPDFTemplate
-}
-from '../utils/pdfTemplate'
+} from '../utils/pdfTemplate'
 
 export default function ContrattiLegaliPage({
   goHome
@@ -17,18 +16,12 @@ export default function ContrattiLegaliPage({
     useState('')
 
   const [clientType, setClientType] =
-    useState('Privato')
+    useState('Persona fisica')
 
-  const [service, setService] =
+  const [businessName, setBusinessName] =
     useState('')
 
-  const [compensation, setCompensation] =
-    useState('')
-
-  const [duration, setDuration] =
-    useState('')
-
-  const [clauses, setClauses] =
+  const [payment, setPayment] =
     useState('')
 
   const [lawyer, setLawyer] =
@@ -36,254 +29,259 @@ export default function ContrattiLegaliPage({
 
   async function generatePDF() {
 
-    try {
-
-      const protocol =
-        Math.floor(
-          Math.random() * 999999
-        )
-
-      const doc =
-        createPDFTemplate(
-          'CONTRATTO LEGALE'
-        )
-
-      // PROTOCOLLO
-
-      doc.setFontSize(11)
-
-      doc.text(
-        `Protocollo: ${protocol}`,
-        20,
-        78
-      )
-
-      // TESTO
-
-      doc.setFontSize(12)
-
-      const bodyText =
-        `Il presente contratto viene stipulato tra lo Studio Legale Vasquez, rappresentato dall'Avvocato ${lawyer}, e ${clientName} (${clientType}) per la prestazione dei seguenti servizi legali: ${service}.`
-
-      doc.text(
-        bodyText,
-        20,
-        105,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // COMPENSO
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Compenso professionale',
-        20,
-        145
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        compensation,
-        20,
-        158
-      )
-
-      // DURATA
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Durata contratto',
-        20,
-        178
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        duration,
-        20,
-        191
-      )
-
-      // CLAUSOLE
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Clausole',
-        20,
-        211
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        clauses,
-        20,
-        224,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.5
-        }
-      )
-
-      // FIRME
-
-      doc.setFontSize(12)
-
-      doc.text(
-        'Firma Cliente',
-        20,
-        255
-      )
-
-      doc.line(
-        20,
-        265,
-        80,
-        265
-      )
-
-      doc.text(
-        clientName,
-        20,
-        275
-      )
-
-      doc.text(
-        'Firma Avvocato',
-        120,
-        255
-      )
-
-      doc.line(
-        120,
-        265,
-        180,
-        265
-      )
-
-      doc.text(
-        lawyer,
-        120,
-        275
-      )
-
-      // CREA PDF
-
-      const pdfBlob =
-        doc.output('blob')
-
-      // DOWNLOAD
-
-      doc.save(
-        `contratto_${clientName}.pdf`
-      )
-
-      // FILE NAME
-
-      const fileName =
-        `contratto_${Date.now()}.pdf`
-
-      // UPLOAD
-
-      const {
-        error: uploadError
-      } =
-        await supabase
-          .storage
-          .from('contratti-legali')
-          .upload(
-            fileName,
-            pdfBlob,
-            {
-              upsert: true,
-              contentType:
-                'application/pdf'
-            }
-          )
-
-      if (uploadError) {
-
-        alert(
-          'Errore upload storage'
-        )
-
-        return
-      }
-
-      // URL
-
-      const {
-        data: publicData
-      } =
-        supabase
-          .storage
-          .from('contratti-legali')
-          .getPublicUrl(fileName)
-
-      const pdfUrl =
-        publicData.publicUrl
-
-      // DATABASE
-
-      const {
-        error: dbError
-      } =
-        await supabase
-          .from('contratti_legali')
-          .insert({
-
-            client_name:
-              clientName,
-
-            client_type:
-              clientType,
-
-            service,
-
-            compensation,
-
-            duration,
-
-            clauses,
-
-            lawyer,
-
-            protocol:
-              protocol.toString(),
-
-            pdf_url:
-              pdfUrl
-          })
-
-      if (dbError) {
-
-        alert(
-          'Errore database'
-        )
-
-        return
-      }
+    if (
+      !clientName ||
+      !payment
+    ) {
 
       alert(
-        'Contratto salvato correttamente.'
+        'Compila i campi obbligatori'
       )
 
-    } catch(error) {
-
-      console.log(error)
-
-      alert(
-        'Errore generale.'
-      )
+      return
     }
+
+    const protocol =
+      `SLV-${Date.now()}`
+
+    const today =
+      new Date().toLocaleDateString()
+
+    const doc =
+      new jsPDF()
+
+    // TEMPLATE
+
+    await createPDFTemplate(doc)
+
+    // HEADER
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(18)
+
+    doc.text(
+      'CONTRATTO DI ASSISTENZA LEGALE',
+      105,
+      72,
+      {
+        align: 'center'
+      }
+    )
+
+    // INFO
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(11)
+
+    doc.text(
+      `Protocollo: ${protocol}`,
+      22,
+      92
+    )
+
+    doc.text(
+      `Data: ${today}`,
+      150,
+      92
+    )
+
+    // PARTI
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      'PARTI CONTRAENTI',
+      22,
+      110
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    const businessText =
+      clientType === 'Attività'
+        ? `Attività rappresentata: ${businessName}`
+        : 'Cliente privato'
+
+    doc.text(
+      `Studio Legale: Studio Legale Vasquez`,
+      22,
+      122
+    )
+
+    doc.text(
+      `Cliente: ${clientName}`,
+      22,
+      134
+    )
+
+    doc.text(
+      `Tipologia cliente: ${clientType}`,
+      22,
+      146
+    )
+
+    doc.text(
+      businessText,
+      22,
+      158
+    )
+
+    // CLAUSOLE
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      'OGGETTO DELL’INCARICO',
+      22,
+      178
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(10)
+
+    const legalText =
+`Lo Studio Legale Vasquez garantisce assistenza legale professionale e continuativa al cliente relativamente a procedimenti civili, penali, contrattuali ed amministrativi, assicurando tutela giuridica, consulenza e rappresentanza legale secondo la normativa vigente.
+
+Il cliente si impegna a collaborare in buona fede con il professionista incaricato e a rispettare gli obblighi economici previsti dal presente accordo.
+
+Lo Studio Legale garantisce riservatezza e professionalità nello svolgimento dell’incarico.`
+
+    doc.text(
+      legalText,
+      22,
+      190,
+      {
+        maxWidth: 165,
+        lineHeightFactor: 1.35
+      }
+    )
+
+    // COMPENSO E VALIDITÀ
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(11)
+
+    doc.text(
+      'COMPENSO E VALIDITÀ',
+      22,
+      235
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(10)
+
+    doc.text(
+      `Il compenso pattuito tra le parti è stabilito in ${payment}. Il presente contratto rimane valido fino a revoca consensuale o cessazione del rapporto professionale tra le parti.`,
+      22,
+      248,
+      {
+        maxWidth: 165,
+        lineHeightFactor: 1.3
+      }
+    )
+
+    // FIRME
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(10)
+
+    // CLIENTE
+
+    doc.line(
+      22,
+      276,
+      80,
+      276
+    )
+
+    doc.text(
+      'FIRMA CLIENTE',
+      22,
+      282
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    // SEMPRE PERSONA FISICA
+
+    doc.text(
+      clientName,
+      22,
+      288
+    )
+
+    // AVVOCATO
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.line(
+      125,
+      276,
+      185,
+      276
+    )
+
+    doc.text(
+      'FIRMA AVVOCATO',
+      125,
+      282
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.text(
+      lawyer,
+      125,
+      288
+    )
+
+    // DOWNLOAD
+
+    doc.save(
+      `contratto_assistenza_legale_${Date.now()}.pdf`
+    )
   }
 
   return (
@@ -307,7 +305,7 @@ export default function ContrattiLegaliPage({
           color: 'black',
           border: 'none',
           padding: '15px 30px',
-          borderRadius: '20px',
+          borderRadius: '18px',
           fontWeight: 'bold',
           cursor: 'pointer'
         }}
@@ -315,26 +313,41 @@ export default function ContrattiLegaliPage({
         HOME
       </button>
 
-      <h1
-        style={{
-          color: '#d4af37',
-          fontSize: '55px',
-          marginBottom: '40px'
-        }}
-      >
-        CONTRATTI LEGALI
-      </h1>
-
       <div
         style={{
+          maxWidth: '950px',
+          margin: '0 auto',
+          background: '#101010',
+          border:
+            '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '30px',
+          padding: '40px',
           display: 'grid',
-          gap: '20px',
-          maxWidth: '1000px'
+          gap: '20px'
         }}
       >
 
+        <img
+          src="/logo.png"
+          style={{
+            width: '180px',
+            margin: '0 auto',
+            objectFit: 'contain'
+          }}
+        />
+
+        <h1
+          style={{
+            color: '#d4af37',
+            textAlign: 'center',
+            fontSize: '38px'
+          }}
+        >
+          CONTRATTO ASSISTENZA LEGALE
+        </h1>
+
         <input
-          placeholder="Cliente"
+          placeholder="Nome cliente"
           value={clientName}
           onChange={(e) =>
             setClientName(
@@ -354,62 +367,41 @@ export default function ContrattiLegaliPage({
           style={inputStyle}
         >
           <option>
-            Privato
+            Persona fisica
           </option>
 
           <option>
-            Azienda
-          </option>
-
-          <option>
-            Assistito Penale
+            Attività
           </option>
         </select>
 
-        <textarea
-          placeholder="Servizi legali forniti"
-          value={service}
-          onChange={(e) =>
-            setService(
-              e.target.value
-            )
-          }
-          rows={5}
-          style={textareaStyle}
-        />
+        {
+          clientType ===
+          'Attività' && (
+
+            <input
+              placeholder="Nome attività"
+              value={businessName}
+              onChange={(e) =>
+                setBusinessName(
+                  e.target.value
+                )
+              }
+              style={inputStyle}
+            />
+
+          )
+        }
 
         <input
-          placeholder="Compenso"
-          value={compensation}
+          placeholder="Compenso pattuito"
+          value={payment}
           onChange={(e) =>
-            setCompensation(
+            setPayment(
               e.target.value
             )
           }
           style={inputStyle}
-        />
-
-        <input
-          placeholder="Durata contratto"
-          value={duration}
-          onChange={(e) =>
-            setDuration(
-              e.target.value
-            )
-          }
-          style={inputStyle}
-        />
-
-        <textarea
-          placeholder="Clausole contrattuali"
-          value={clauses}
-          onChange={(e) =>
-            setClauses(
-              e.target.value
-            )
-          }
-          rows={7}
-          style={textareaStyle}
         />
 
         <input
@@ -425,15 +417,7 @@ export default function ContrattiLegaliPage({
 
         <button
           onClick={generatePDF}
-          style={{
-            background: '#d4af37',
-            color: 'black',
-            border: 'none',
-            padding: '20px',
-            borderRadius: '20px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
+          style={buttonStyle}
         >
           GENERA CONTRATTO PDF
         </button>
@@ -459,19 +443,21 @@ const inputStyle = {
   fontSize: '16px'
 }
 
-const textareaStyle = {
+const buttonStyle = {
 
-  background: '#1a1a1a',
+  background: '#d4af37',
 
-  border: '1px solid #333',
+  color: 'black',
 
-  borderRadius: '16px',
+  border: 'none',
 
-  padding: '18px',
+  padding: '20px',
 
-  color: 'white',
+  borderRadius: '20px',
 
-  fontSize: '16px',
+  fontWeight: 'bold',
 
-  resize: 'none'
+  fontSize: '18px',
+
+  cursor: 'pointer'
 }
