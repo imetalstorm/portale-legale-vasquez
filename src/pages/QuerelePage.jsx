@@ -1,28 +1,24 @@
 import { useState }
 from 'react'
 
-import { supabase }
-from '../services/supabase'
+import jsPDF
+from 'jspdf'
 
 import {
   createPDFTemplate
-}
-from '../utils/pdfTemplate'
+} from '../utils/pdfTemplate'
 
 export default function QuerelePage({
   goHome
 }) {
 
-  const [complainant, setComplainant] =
+  const [fullName, setFullName] =
     useState('')
 
-  const [accused, setAccused] =
+  const [birthDate, setBirthDate] =
     useState('')
 
   const [facts, setFacts] =
-    useState('')
-
-  const [damages, setDamages] =
     useState('')
 
   const [lawyer, setLawyer] =
@@ -30,234 +26,125 @@ export default function QuerelePage({
 
   async function generatePDF() {
 
-    try {
-
-      const protocol =
-        Math.floor(
-          Math.random() * 999999
-        )
-
-      const doc =
-        createPDFTemplate(
-          'QUERELA FORMALE'
-        )
-
-      // PROTOCOLLO
-
-      doc.setFontSize(11)
-
-      doc.text(
-        `Protocollo: ${protocol}`,
-        20,
-        78
-      )
-
-      // TESTO
-
-      doc.setFontSize(12)
-
-      const bodyText =
-        `Il sottoscritto ${complainant}, assistito legalmente dall'Avvocato ${lawyer}, propone formale querela nei confronti di ${accused} per i fatti di seguito descritti.`
-
-      doc.text(
-        bodyText,
-        20,
-        105,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // FATTI
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Descrizione dei fatti',
-        20,
-        145
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        facts,
-        20,
-        160,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // DANNI
-
-      doc.setFontSize(13)
-
-      doc.text(
-        'Danni dichiarati',
-        20,
-        210
-      )
-
-      doc.setFontSize(11)
-
-      doc.text(
-        damages,
-        20,
-        222,
-        {
-          maxWidth: 170,
-          lineHeightFactor: 1.6
-        }
-      )
-
-      // FIRME
-
-      doc.setFontSize(12)
-
-      doc.text(
-        'Firma Querelante',
-        20,
-        250
-      )
-
-      doc.line(
-        20,
-        260,
-        80,
-        260
-      )
-
-      doc.text(
-        complainant,
-        20,
-        270
-      )
-
-      doc.text(
-        'Firma Avvocato',
-        120,
-        250
-      )
-
-      doc.line(
-        120,
-        260,
-        180,
-        260
-      )
-
-      doc.text(
-        lawyer,
-        120,
-        270
-      )
-
-      // CREA PDF
-
-      const pdfBlob =
-        doc.output('blob')
-
-      // DOWNLOAD
-
-      doc.save(
-        `querela_${complainant}.pdf`
-      )
-
-      // FILE NAME
-
-      const fileName =
-        `querela_${Date.now()}.pdf`
-
-      // UPLOAD
-
-      const {
-        error: uploadError
-      } =
-        await supabase
-          .storage
-          .from('querele')
-          .upload(
-            fileName,
-            pdfBlob,
-            {
-              upsert: true,
-              contentType:
-                'application/pdf'
-            }
-          )
-
-      if (uploadError) {
-
-        alert(
-          'Errore upload storage'
-        )
-
-        return
-      }
-
-      // URL
-
-      const {
-        data: publicData
-      } =
-        supabase
-          .storage
-          .from('querele')
-          .getPublicUrl(fileName)
-
-      const pdfUrl =
-        publicData.publicUrl
-
-      // DATABASE
-
-      const {
-        error: dbError
-      } =
-        await supabase
-          .from('querele')
-          .insert({
-
-            complainant,
-
-            accused,
-
-            facts,
-
-            damages,
-
-            lawyer,
-
-            protocol:
-              protocol.toString(),
-
-            pdf_url:
-              pdfUrl
-          })
-
-      if (dbError) {
-
-        alert(
-          'Errore database'
-        )
-
-        return
-      }
+    if (
+      !fullName ||
+      !facts
+    ) {
 
       alert(
-        'Querela salvata correttamente.'
+        'Compila i campi obbligatori'
       )
 
-    } catch(error) {
-
-      console.log(error)
-
-      alert(
-        'Errore generale.'
-      )
+      return
     }
+
+    const protocol =
+      `QUE-${Date.now()}`
+
+    // IMPORTANTISSIMO
+
+    const doc =
+      new jsPDF()
+
+    // TEMPLATE
+
+    await createPDFTemplate(doc)
+
+    // TITOLO
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(19)
+
+    doc.text(
+      'QUERELA',
+      105,
+      82,
+      {
+        align: 'center'
+      }
+    )
+
+    // DATI
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(12)
+
+    doc.text(
+      `Protocollo: ${protocol}`,
+      22,
+      102
+    )
+
+    doc.text(
+      `Nome e cognome: ${fullName}`,
+      22,
+      116
+    )
+
+    doc.text(
+      `Data di nascita: ${birthDate}`,
+      22,
+      130
+    )
+
+    // FATTI
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      'ESPOSIZIONE DEI FATTI',
+      22,
+      152
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.setFontSize(11)
+
+    doc.text(
+      facts,
+      22,
+      168,
+      {
+        maxWidth: 165,
+        lineHeightFactor: 1.6
+      }
+    )
+
+    // FIRMA
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.setFontSize(11)
+
+    doc.text(
+      `Avvocato: ${lawyer}`,
+      22,
+      270
+    )
+
+    // DOWNLOAD
+
+    doc.save(
+      `querela_${Date.now()}.pdf`
+    )
   }
 
   return (
@@ -281,7 +168,7 @@ export default function QuerelePage({
           color: 'black',
           border: 'none',
           padding: '15px 30px',
-          borderRadius: '20px',
+          borderRadius: '18px',
           fontWeight: 'bold',
           cursor: 'pointer'
         }}
@@ -289,29 +176,44 @@ export default function QuerelePage({
         HOME
       </button>
 
-      <h1
-        style={{
-          color: '#d4af37',
-          fontSize: '55px',
-          marginBottom: '40px'
-        }}
-      >
-        QUERELE
-      </h1>
-
       <div
         style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          background: '#101010',
+          border:
+            '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '30px',
+          padding: '40px',
           display: 'grid',
-          gap: '20px',
-          maxWidth: '1000px'
+          gap: '20px'
         }}
       >
 
+        <img
+          src="/logo.png"
+          style={{
+            width: '180px',
+            margin: '0 auto',
+            objectFit: 'contain'
+          }}
+        />
+
+        <h1
+          style={{
+            color: '#d4af37',
+            textAlign: 'center',
+            fontSize: '38px'
+          }}
+        >
+          QUERELA
+        </h1>
+
         <input
-          placeholder="Querelante"
-          value={complainant}
+          placeholder="Nome e cognome"
+          value={fullName}
           onChange={(e) =>
-            setComplainant(
+            setFullName(
               e.target.value
             )
           }
@@ -319,10 +221,10 @@ export default function QuerelePage({
         />
 
         <input
-          placeholder="Querelato"
-          value={accused}
+          placeholder="Data di nascita"
+          value={birthDate}
           onChange={(e) =>
-            setAccused(
+            setBirthDate(
               e.target.value
             )
           }
@@ -330,7 +232,7 @@ export default function QuerelePage({
         />
 
         <textarea
-          placeholder="Descrizione dei fatti"
+          placeholder="Esposizione dei fatti"
           value={facts}
           onChange={(e) =>
             setFacts(
@@ -338,18 +240,6 @@ export default function QuerelePage({
             )
           }
           rows={8}
-          style={textareaStyle}
-        />
-
-        <textarea
-          placeholder="Danni morali/materiali"
-          value={damages}
-          onChange={(e) =>
-            setDamages(
-              e.target.value
-            )
-          }
-          rows={5}
           style={textareaStyle}
         />
 
@@ -366,15 +256,7 @@ export default function QuerelePage({
 
         <button
           onClick={generatePDF}
-          style={{
-            background: '#d4af37',
-            color: 'black',
-            border: 'none',
-            padding: '20px',
-            borderRadius: '20px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
+          style={buttonStyle}
         >
           GENERA QUERELA PDF
         </button>
@@ -412,7 +294,26 @@ const textareaStyle = {
 
   color: 'white',
 
-  fontSize: '16px',
+  fontSize: '15px',
 
   resize: 'none'
+}
+
+const buttonStyle = {
+
+  background: '#d4af37',
+
+  color: 'black',
+
+  border: 'none',
+
+  padding: '20px',
+
+  borderRadius: '20px',
+
+  fontWeight: 'bold',
+
+  fontSize: '18px',
+
+  cursor: 'pointer'
 }
