@@ -5,7 +5,19 @@ export async function createPDFTemplate(
   try {
 
     const img =
+      new Image()
+
+    img.src =
       '/pdf-background.png'
+
+    await new Promise(
+      (resolve, reject) => {
+
+        img.onload = resolve
+
+        img.onerror = reject
+      }
+    )
 
     doc.addImage(
       img,
@@ -21,7 +33,7 @@ export async function createPDFTemplate(
     console.log(err)
 
     throw new Error(
-      'Errore caricamento template PDF'
+      'Errore template PDF'
     )
   }
 }
