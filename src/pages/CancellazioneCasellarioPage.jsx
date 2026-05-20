@@ -44,8 +44,6 @@ export default function CancellazioneCasellarioPage({
     const protocol =
       `CAS-${Date.now()}`
 
-    // jsPDF CORRETTO
-
     const doc =
       new jsPDF()
 
@@ -127,19 +125,70 @@ export default function CancellazioneCasellarioPage({
       }
     )
 
-    // FIRMA
+    // FIRME
 
     doc.setFont(
       'times',
       'bold'
     )
 
-    doc.setFontSize(11)
+    doc.setFontSize(10)
+
+    // CLIENTE
 
     doc.text(
-      `Avvocato: ${lawyer}`,
+      'FIRMA CLIENTE',
       22,
-      270
+      258
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.text(
+      fullName,
+      22,
+      264
+    )
+
+    doc.line(
+      22,
+      268,
+      80,
+      268
+    )
+
+    // AVVOCATO
+
+    doc.setFont(
+      'times',
+      'bold'
+    )
+
+    doc.text(
+      'FIRMA AVVOCATO',
+      125,
+      258
+    )
+
+    doc.setFont(
+      'times',
+      'normal'
+    )
+
+    doc.text(
+      lawyer,
+      125,
+      264
+    )
+
+    doc.line(
+      125,
+      268,
+      185,
+      268
     )
 
     // DOWNLOAD
